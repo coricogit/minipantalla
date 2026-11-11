@@ -1,0 +1,87 @@
+#!/bin/bash
+# minipantalla: controla la mini pantalla USB QTKeJi / AX206 2.1" (2a55:9990) desde Linux.
+# Protocolo: https://github.com/caioklein/AX206-LCD-Screen (GPL-3.0), copia revisada en vendor/.
+
+set -euo pipefail
+
+DIR="$(dirname "$(readlink -f "$0")")"
+CLI=(python3 "$DIR/vendor/cli.py")
+ACT=(python3 "$DIR/acciones.py")
+UNIT=minipantalla.service
+
+usage() {
+  cat <<'EOF'
+Uso: minipantalla <comando> [opciones]
+
+  poner <archivo>           Transmite en vivo ese gif/imagen/video (lo hace el servicio,
+                            fluido y a todo color). Con el PC apagado la pantalla se apaga.
+  rotar <0|90|180|270>      Gira la imagen
+  estado                    Muestra si el servicio está transmitiendo y qué
+  iniciar | parar           Arranca o para el servicio (al parar, la pantalla se apaga)
+  instalar                  Instala el servicio de usuario y lo deja activado al iniciar sesión
+
+  guardar <archivo>         Graba el archivo en la memoria de la pantalla para que lo
+                            reproduzca sin PC (para el servicio; GIFs algo trabados)
+  transmitir <archivo>      Transmite a mano en esta terminal (Ctrl+C para parar)
+  info                      Muestra la resolución (prueba la conexión)
+
+Opciones:
+  --fit cover|contain|stretch   (poner, guardar, transmitir) recortar, encajar o estirar
+  --colores N                   (guardar, GIF) 2..256, defecto 128; menos = más fluido
+
+Comandos originales (en inglés) también funcionan: save, preview, settings,
+factory-reset, nudge. Añade --trace antes del comando para depurar USB.
+EOF
+}
+
+active() { systemctl --user -q is-active "$UNIT" 2>/dev/null; }
+
+need_free_usb() {
+  if active; then
+    echo "El servicio está usando la pantalla. Páralo antes con: minipantalla parar" >&2
+    exit 1
+  fi
+}
+
+cmd="${1:-}"
+[[ -n $cmd ]] || { usage; exit 1; }
+shift
+
+case "$cmd" in
+  -h|--help|ayuda) usage ;;
+  poner)
+    [[ $# -ge 1 ]] || { echo "Falta el archivo" >&2; exit 1; }
+    "${ACT[@]}" elegir "$@"
+    active || systemctl --user start "$UNIT" 2>/dev/null \
+      || echo "Aviso: el servicio no está instalado; ejecuta: minipantalla instalar" >&2 ;;
+  rotar)
+    case "${1:-}" in
+      0) r=0 ;; 90) r=1 ;; 180) r=2 ;; 270) r=3 ;;
+      *) echo "Usa 0, 90, 180 o 270" >&2; exit 1 ;;
+    esac
+    exec "${ACT[@]}" rotar "$r" ;;
+  estado)
+    systemctl --user --no-pager status "$UNIT" -n 5 || true ;;
+  iniciar) systemctl --user start "$UNIT" ;;
+  parar) systemctl --user stop "$UNIT" ;;
+  instalar)
+    mkdir -p ~/.config/systemd/user
+    sed "s|@DIR@|$DIR|g" "$DIR/minipantalla.service" > ~/.config/systemd/user/"$UNIT"
+    systemctl --user daemon-reload
+    systemctl --user enable --now "$UNIT"
+    echo "Servicio instalado y en marcha." ;;
+  guardar)
+    [[ $# -ge 1 ]] || { echo "Falta el archivo" >&2; exit 1; }
+    if active; then
+      systemctl --user stop "$UNIT"
+      echo "  (servicio parado; 'minipantalla iniciar' para volver a transmitir)"
+    fi
+    exec "${ACT[@]}" guardar "$@" ;;
+  mostrar) need_free_usb; exec "${ACT[@]}" mostrar ;;
+  transmitir)
+    [[ $# -ge 1 ]] || { echo "Falta el archivo" >&2; exit 1; }
+    need_free_usb
+    exec "${CLI[@]}" preview --loop "$@" ;;
+  info) need_free_usb; exec "${CLI[@]}" info "$@" ;;
+  *) need_free_usb; exec "${CLI[@]}" "$cmd" "$@" ;;
+esac

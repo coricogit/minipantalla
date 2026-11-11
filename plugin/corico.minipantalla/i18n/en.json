@@ -1,0 +1,18 @@
+{
+  "title": "Mini screen",
+  "connectedNoSize": "CONNECTED",
+  "disconnected": "NOT CONNECTED",
+  "media": "GIFS AND IMAGES",
+  "empty": "Copy GIFs, images or videos to %1",
+  "openFolder": "Open folder",
+  "refresh": "Refresh",
+  "rotation": "ROTATION",
+  "saving": "Switching to %1…",
+  "rotating": "Applying rotation…",
+  "saved": "Streaming %1",
+  "rotated": "Rotation applied",
+  "failed": "Could not finish: %1",
+  "current": "CURRENT",
+  "streaming": "STREAMING",
+  "stopped": "CONNECTED · SERVICE STOPPED"
+}

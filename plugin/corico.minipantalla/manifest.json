@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "corico.minipantalla",
+  "name": "Mini pantalla",
+  "version": "0.2.0",
+  "author": "corico",
+  "description": "Elige el GIF, imagen o video de la mini pantalla USB AX206 2.1\" (2a55:9990)",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Mini pantalla",
+    "description": "Elige el GIF, imagen o video de la mini pantalla USB",
+    "category": "System",
+    "allowMultiple": false
+  }
+}

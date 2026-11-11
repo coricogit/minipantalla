@@ -1,0 +1,18 @@
+{
+  "title": "Mini pantalla",
+  "connectedNoSize": "CONECTADA",
+  "disconnected": "NO CONECTADA",
+  "media": "GIFS E IMÁGENES",
+  "empty": "Copia GIFs, imágenes o videos a %1",
+  "openFolder": "Abrir carpeta",
+  "refresh": "Actualizar",
+  "rotation": "ROTACIÓN",
+  "saving": "Cambiando a %1…",
+  "rotating": "Aplicando rotación…",
+  "saved": "Transmitiendo %1",
+  "rotated": "Rotación aplicada",
+  "failed": "No se pudo completar: %1",
+  "current": "ACTUAL",
+  "streaming": "TRANSMITIENDO",
+  "stopped": "CONECTADA · SERVICIO PARADO"
+}

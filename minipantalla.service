@@ -1,0 +1,16 @@
+[Unit]
+Description=Mini pantalla USB AX206: transmisión en vivo (se apaga con el PC)
+Documentation=file://@DIR@/servicio.py
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 @DIR@/servicio.py
+# Al parar (apagado, cierre de sesión) servicio.py manda "apagar panel" antes de salir.
+KillSignal=SIGTERM
+TimeoutStopSec=8
+Restart=on-failure
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target

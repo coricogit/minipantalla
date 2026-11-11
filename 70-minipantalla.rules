@@ -1,0 +1,2 @@
+# Mini pantalla USB QTKeJi "SmatCool" / AX206 2.1" (2a55:9990): acceso para el usuario con sesión activa
+SUBSYSTEM=="usb", ATTR{idVendor}=="2a55", ATTR{idProduct}=="9990", TAG+="uaccess"
