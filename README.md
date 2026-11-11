@@ -7,7 +7,7 @@ Windows app. This repo gives you:
 - a CLI, `minipantalla`, to show GIFs, images and videos on the screen and to rotate them
 - a user service that streams to the screen live, at full color and smooth framerate.
   The screen turns off when the PC shuts down or suspends.
-- an [Omarchy](https://omarchy.org/) bar plugin to pick a file and rotate it with one click
+- an [Omarchy](https://omarchy.org/) bar plugin, **Mini Screen**, to pick a file and rotate it with one click ([also on its own repo](https://github.com/coricogit/omarchy-mini-screen))
 
 *[Leer en español](README.es.md)*
 

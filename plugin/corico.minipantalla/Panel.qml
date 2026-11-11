@@ -26,6 +26,7 @@ Panel {
   property string current: ""
   property int rotation: 0
   property bool streaming: false
+  property bool installed: true
 
   // Una sola operación USB a la vez: guardar y rotar comparten `busy`.
   property bool busy: false
@@ -50,6 +51,7 @@ Panel {
       root.current = s.current || ""
       root.rotation = s.rotation || 0
       root.streaming = !!s.streaming
+      root.installed = s.installed !== false
     } catch (e) {
       root.connected = false
     }
@@ -67,7 +69,7 @@ Panel {
   }
 
   function put(path) {
-    if (root.busy || !root.connected) return
+    if (root.busy || !root.connected || !root.installed) return
     root.busy = true
     root.busyKind = "save"
     root.busyFile = path
@@ -78,7 +80,7 @@ Panel {
   }
 
   function rotate(r) {
-    if (root.busy || !root.connected || r === root.rotation) return
+    if (root.busy || !root.connected || !root.installed || r === root.rotation) return
     root.busy = true
     root.busyKind = "rotate"
     root.progress = 0
@@ -233,6 +235,18 @@ Panel {
             }
           }
 
+          // ---------- Falta el CLI ----------
+          Text {
+            visible: !root.installed
+            textFormat: Text.PlainText
+            text: strings.t("missingCli")
+            color: Commons.Color.accent
+            font.family: root.bar.fontFamily
+            font.pixelSize: Style.font.body
+            wrapMode: Text.Wrap
+            width: parent.width
+          }
+
           // ---------- Progreso / resultado ----------
           Rectangle {
             visible: root.busy || root.status !== ""
@@ -376,7 +390,7 @@ Panel {
                   width: rotationRow.cellWidth
                   text: (modelData * 90) + "°"
                   active: root.rotation === modelData
-                  enabled: root.connected && !root.busy
+                  enabled: root.connected && root.installed && !root.busy
                   bordered: true
                   foreground: root.bar.foreground
                   fontFamily: root.bar.fontFamily

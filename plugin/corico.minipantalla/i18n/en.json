@@ -1,5 +1,5 @@
 {
-  "title": "Mini screen",
+  "title": "Mini Screen",
   "connectedNoSize": "CONNECTED",
   "disconnected": "NOT CONNECTED",
   "media": "GIFS AND IMAGES",
@@ -14,5 +14,6 @@
   "failed": "Could not finish: %1",
   "current": "CURRENT",
   "streaming": "STREAMING",
-  "stopped": "CONNECTED · SERVICE STOPPED"
+  "stopped": "CONNECTED · SERVICE STOPPED",
+  "missingCli": "The minipantalla CLI is not installed. See the plugin README."
 }

@@ -68,7 +68,9 @@ mkdir -p "$PICS"
 echo "Put your GIFs, images and videos in $PICS"
 
 step "Bar plugin"
-if [[ -d $HOME/.config/omarchy ]]; then
+if [[ -d $PLUGINS_DIR/$PLUGIN_ID/.git ]]; then
+  echo "Installed from the marketplace (omarchy plugin add); leaving it as is."
+elif [[ -d $HOME/.config/omarchy ]]; then
   mkdir -p "$PLUGINS_DIR/$PLUGIN_ID"
   rsync -a --delete --exclude='__pycache__/' "$DIR/plugin/$PLUGIN_ID/" "$PLUGINS_DIR/$PLUGIN_ID/"
   if command -v omarchy >/dev/null; then

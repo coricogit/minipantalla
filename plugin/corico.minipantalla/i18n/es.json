@@ -14,5 +14,6 @@
   "failed": "No se pudo completar: %1",
   "current": "ACTUAL",
   "streaming": "TRANSMITIENDO",
-  "stopped": "CONECTADA · SERVICIO PARADO"
+  "stopped": "CONECTADA · SERVICIO PARADO",
+  "missingCli": "Falta el CLI minipantalla. Mira el README del plugin."
 }

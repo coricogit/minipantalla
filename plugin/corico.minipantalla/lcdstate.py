@@ -16,6 +16,7 @@ import sys
 VID, PID = "2a55", "9990"
 HOME = os.path.expanduser("~")
 FOLDER = os.environ.get("MINIPANTALLA_DIR") or os.path.join(HOME, "Pictures", "minipantalla")
+TOOL = os.path.join(HOME, ".local", "bin", "minipantalla")
 SETTINGS = os.path.join(HOME, ".config", "AppotechLCD", "settings.ini")
 EXTS = {".gif", ".png", ".jpg", ".jpeg", ".bmp", ".mp4", ".mkv", ".webm", ".mov", ".avi"}
 VIDEO = {".mp4", ".mkv", ".webm", ".mov", ".avi"}
@@ -83,6 +84,7 @@ def state():
         "current": s.get("ResPath", ""),
         "rotation": rotation,
         "streaming": streaming(),
+        "installed": os.access(TOOL, os.X_OK),
     }
 
 

@@ -7,7 +7,7 @@ programa para Windows. Este repo incluye:
 - un CLI, `minipantalla`, para poner GIFs, imágenes y videos en la pantalla y girarlos
 - un servicio de usuario que transmite en vivo, a todo color y fluido. La pantalla
   se apaga cuando apagas o suspendes el PC.
-- un plugin para la barra de [Omarchy](https://omarchy.org/) para elegir el archivo y girarlo con un clic
+- un plugin para la barra de [Omarchy](https://omarchy.org/), **Mini Screen**, para elegir el archivo y girarlo con un clic
 
 ## ¿Es compatible mi pantalla?
 
