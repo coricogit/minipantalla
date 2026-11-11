@@ -31,9 +31,7 @@ Without the CLI, the panel still opens but tells you it's missing.
 2. Install the CLI and service, pinned to the reviewed commit. This also installs the dependencies and the udev rule, and leaves the widget from step 1 untouched:
 
    ```bash
-   git clone https://github.com/coricogit/minipantalla.git ~/minipantalla
-   git -C ~/minipantalla checkout --detach e202cf9735ca292ad091077ffcb8e7a23b040c5e
-   ~/minipantalla/install.sh
+   git clone https://github.com/coricogit/minipantalla.git ~/minipantalla && git -C ~/minipantalla checkout --detach e202cf9735ca292ad091077ffcb8e7a23b040c5e && ~/minipantalla/install.sh
    ```
 
 Put your media in `~/Pictures/minipantalla`, or set `MINIPANTALLA_DIR` to use another folder.
