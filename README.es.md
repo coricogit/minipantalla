@@ -1,4 +1,4 @@
-# minipantalla
+# minipantalla — ahora también para KDE Plasma 6
 
 Soporte en Linux para la **mini pantalla USB redonda de 2.1"** que se vende como
 QTKeJi / "SmatCool" / AX206 (480×480). El fabricante solo trae
@@ -8,6 +8,7 @@ programa para Windows. Este repo incluye:
 - un servicio de usuario que transmite en vivo, a todo color y fluido. La pantalla
   se apaga cuando apagas o suspendes el PC.
 - un plugin para la barra de [Omarchy](https://omarchy.org/), **Mini Screen**, para elegir el archivo y girarlo con un clic
+- el mismo widget para **KDE Plasma 6** (CachyOS, Arch + Plasma...)
 
 ## ¿Es compatible mi pantalla?
 
@@ -22,7 +23,8 @@ Si sale una línea, es el mismo chip con el que se probó. Otras pantallas AX206
 
 ## Instalación
 
-Necesitas Arch Linux. El plugin de la barra necesita además Omarchy; sin él, el CLI y el servicio funcionan igual.
+Necesitas una distro basada en Arch (Arch, Omarchy, CachyOS...). El widget de la barra
+necesita Omarchy o KDE Plasma 6; sin ninguno, el CLI y el servicio funcionan igual.
 
 ```bash
 git clone https://github.com/coricogit/minipantalla.git ~/minipantalla
@@ -36,7 +38,8 @@ que deja a tu usuario usar la pantalla. Además:
 
 - enlaza `~/.local/bin/minipantalla` a esta carpeta (no la muevas después de clonarla)
 - crea `~/Pictures/minipantalla` para tus archivos (se cambia con `MINIPANTALLA_DIR`)
-- copia el plugin a `~/.config/omarchy/plugins/corico.minipantalla` y lo activa
+- en Omarchy, copia el plugin a `~/.config/omarchy/plugins/corico.minipantalla` y lo activa
+- en KDE Plasma, instala el widget **Mini pantalla**. Añádelo con clic derecho en el panel > *Añadir widgets*
 - instala y arranca `minipantalla.service` (unidad de usuario de systemd)
 
 Para actualizar: `git pull && ./install.sh`. Para quitarlo: `./install.sh --uninstall`.

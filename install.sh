@@ -1,6 +1,7 @@
 #!/bin/bash
-# Installs minipantalla on Omarchy: dependencies, USB permissions, the CLI,
-# the live-streaming service and the bar plugin.
+# Installs minipantalla on Arch-based systems (Omarchy, CachyOS...):
+# dependencies, USB permissions, the CLI, the live-streaming service and the
+# bar widget (Omarchy bar plugin and/or KDE Plasma 6 widget).
 #
 #   ./install.sh              install (or update) everything
 #   ./install.sh --uninstall  remove it again (your pictures are kept)
@@ -10,6 +11,7 @@ set -euo pipefail
 DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 PLUGIN_ID=corico.minipantalla
 PLUGINS_DIR="$HOME/.config/omarchy/plugins"
+PLASMOID_ID=org.corico.minipantalla
 RULE=/etc/udev/rules.d/70-minipantalla.rules
 BIN="$HOME/.local/bin/minipantalla"
 UNIT=minipantalla.service
@@ -26,6 +28,10 @@ if [[ ${1:-} == "--uninstall" ]]; then
   step "Removing the bar plugin"
   command -v omarchy >/dev/null && omarchy plugin disable "$PLUGIN_ID" 2>/dev/null || true
   rm -rf "${PLUGINS_DIR:?}/$PLUGIN_ID"
+  if command -v kpackagetool6 >/dev/null && kpackagetool6 -t Plasma/Applet -s "$PLASMOID_ID" &>/dev/null; then
+    step "Removing the Plasma widget"
+    kpackagetool6 -t Plasma/Applet -r "$PLASMOID_ID"
+  fi
   step "Removing the CLI and the USB rule"
   [[ -L $BIN ]] && rm -f "$BIN"
   if [[ -f $RULE ]]; then
@@ -77,7 +83,26 @@ elif [[ -d $HOME/.config/omarchy ]]; then
     omarchy plugin enable "$PLUGIN_ID" || echo "Enable it later with: omarchy plugin enable $PLUGIN_ID"
   fi
 else
-  echo "Omarchy not found; skipping the bar plugin (the CLI works on its own)."
+  echo "Omarchy not found; skipping the Omarchy bar plugin."
+fi
+
+step "Plasma widget"
+if command -v kpackagetool6 >/dev/null; then
+  # The package bundles lcdstate.py, shared with the Omarchy plugin.
+  stage="$(mktemp -d)"
+  trap 'rm -rf "$stage"' EXIT
+  cp -r "$DIR/plasma/$PLASMOID_ID" "$stage/"
+  cp "$DIR/plugin/$PLUGIN_ID/lcdstate.py" "$stage/$PLASMOID_ID/contents/code/"
+  if kpackagetool6 -t Plasma/Applet -s "$PLASMOID_ID" &>/dev/null; then
+    kpackagetool6 -t Plasma/Applet -u "$stage/$PLASMOID_ID"
+    echo "Updated. If the widget is already on a panel, restart plasmashell to reload it:"
+    echo "  systemctl --user restart plasma-plasmashell"
+  else
+    kpackagetool6 -t Plasma/Applet -i "$stage/$PLASMOID_ID"
+    echo "Add it to a panel: right-click the panel > Add Widgets > \"Mini Screen\" (\"Mini pantalla\" in Spanish)."
+  fi
+else
+  echo "KDE Plasma not found; skipping the Plasma widget."
 fi
 
 step "Live-streaming service"

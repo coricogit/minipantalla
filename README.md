@@ -1,4 +1,4 @@
-# minipantalla
+# minipantalla — now for KDE Plasma 6 too
 
 Linux support for the cheap **2.1" round USB mini screen** sold as
 QTKeJi / "SmatCool" / AX206 (480×480). The vendor only ships a
@@ -8,6 +8,7 @@ Windows app. This repo gives you:
 - a user service that streams to the screen live, at full color and smooth framerate.
   The screen turns off when the PC shuts down or suspends.
 - an [Omarchy](https://omarchy.org/) bar plugin, **Mini Screen**, to pick a file and rotate it with one click ([also on its own repo](https://github.com/coricogit/omarchy-mini-screen))
+- the same widget for **KDE Plasma 6** (CachyOS, Arch + Plasma...)
 
 *[Leer en español](README.es.md)*
 
@@ -24,7 +25,8 @@ screens (other sizes or USB IDs) are **untested** and probably need changes.
 
 ## Install
 
-Requires Arch Linux. The bar plugin also requires Omarchy; without it, the CLI and the service still work.
+Requires an Arch-based distro (Arch, Omarchy, CachyOS...). The bar widget needs
+Omarchy or KDE Plasma 6; without either, the CLI and the service still work.
 
 ```bash
 git clone https://github.com/coricogit/minipantalla.git ~/minipantalla
@@ -38,7 +40,8 @@ that lets your user talk to the screen. It also:
 
 - links `~/.local/bin/minipantalla` to this folder (keep the folder where you cloned it)
 - creates `~/Pictures/minipantalla` for your media (override it with `MINIPANTALLA_DIR`)
-- copies the bar plugin to `~/.config/omarchy/plugins/corico.minipantalla` and enables it
+- on Omarchy, copies the bar plugin to `~/.config/omarchy/plugins/corico.minipantalla` and enables it
+- on KDE Plasma, installs the **Mini Screen** widget. Add it with right-click on the panel > *Add Widgets*
 - installs and starts `minipantalla.service` (systemd user unit)
 
 Update with `git pull && ./install.sh`. Remove it with `./install.sh --uninstall`.

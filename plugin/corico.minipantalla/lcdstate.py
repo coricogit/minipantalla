@@ -55,20 +55,25 @@ def settings():
 
 
 def media_files():
+    """(archivos válidos, nombres ignorados por no tener una extensión conocida)."""
     try:
         os.makedirs(FOLDER, exist_ok=True)
         entries = list(os.scandir(FOLDER))
     except OSError:
-        return []
-    out = []
+        return [], []
+    out, ignored = [], []
     for e in entries:
+        if not e.is_file() or e.name.startswith("."):
+            continue
         ext = os.path.splitext(e.name)[1].lower()
-        if ext in EXTS and e.is_file():
-            st = e.stat()
-            out.append({"path": e.path, "name": e.name, "video": ext in VIDEO,
-                        "size": st.st_size, "mtime": st.st_mtime})
+        if ext not in EXTS:
+            ignored.append(e.name)
+            continue
+        st = e.stat()
+        out.append({"path": e.path, "name": e.name, "video": ext in VIDEO,
+                    "size": st.st_size, "mtime": st.st_mtime})
     out.sort(key=lambda f: f["mtime"], reverse=True)
-    return out
+    return out, sorted(ignored)
 
 
 def state():
@@ -77,14 +82,17 @@ def state():
         rotation = int(s.get("LcdDir", 0)) & 3
     except ValueError:
         rotation = 0
+    files, ignored = media_files()
     return {
         "connected": connected(),
         "folder": FOLDER,
-        "files": media_files(),
+        "files": files,
+        "ignored": ignored,
         "current": s.get("ResPath", ""),
         "rotation": rotation,
         "streaming": streaming(),
         "installed": os.access(TOOL, os.X_OK),
+        "tool": TOOL,
     }
 
 
