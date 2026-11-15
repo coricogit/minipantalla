@@ -60,31 +60,42 @@ def spanish():
         return False
 
 
-def pid_alive(pid):
+def process_started(pid):
+    """Hora de creación (FILETIME) del proceso `pid` si sigue vivo, o None."""
     if not pid:
-        return False
+        return None
     try:
         import ctypes
         k = ctypes.windll.kernel32
         h = k.OpenProcess(0x1000, False, int(pid))        # PROCESS_QUERY_LIMITED_INFORMATION
         if not h:
-            return False
-        code = ctypes.c_ulong()
-        ok = k.GetExitCodeProcess(h, ctypes.byref(code))
-        k.CloseHandle(h)
-        return bool(ok) and code.value == 259             # STILL_ACTIVE
+            return None
+        try:
+            code = ctypes.c_ulong()
+            if not k.GetExitCodeProcess(h, ctypes.byref(code)) or code.value != 259:     # STILL_ACTIVE
+                return None
+            t = [ctypes.c_ulonglong() for _ in range(4)]
+            if not k.GetProcessTimes(h, *[ctypes.byref(x) for x in t]):
+                return None
+            return t[0].value
+        finally:
+            k.CloseHandle(h)
     except (AttributeError, OSError):
-        return False
+        return None
 
 
 def read_status():
-    """Estado que publica la app, o None si no está abierta."""
+    """Estado que publica la app, o None si no está abierta.
+
+    Comprueba el PID y también la hora a la que arrancó ese proceso: si la app se
+    cerró de golpe, Windows puede haber dado su PID a otro programa."""
     try:
         with open(STATUS, encoding="utf-8") as f:
             st = json.load(f)
     except (OSError, ValueError):
         return None
-    return st if pid_alive(st.get("pid")) else None
+    started = process_started(st.get("pid"))
+    return st if started is not None and started == st.get("started") else None
 
 
 def write_status(st):

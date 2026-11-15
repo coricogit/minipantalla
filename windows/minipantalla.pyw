@@ -59,6 +59,7 @@ TEXT = {
 
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 RUN_NAME = "Minipantalla"
+MY_START = common.process_started(os.getpid())   # junto al PID, identifica a esta copia sin ambigüedad
 
 
 def tr(key):
@@ -259,7 +260,7 @@ class Backend(QObject):
         if text != self._state:
             self._state = text
             self.stateChanged.emit()
-        common.write_status({"pid": os.getpid(), "state": s.state, "msg": s.msg, "connected": self.connected,
+        common.write_status({"pid": os.getpid(), "started": MY_START, "state": s.state, "msg": s.msg, "connected": self.connected,
                              "paused": st["paused"], "file": current, "rotation": st["rotation"] * 90,
                              "folder": folder, "time": now})
 
