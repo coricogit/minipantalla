@@ -9,6 +9,7 @@ programa para Windows. Este repo incluye:
   se apaga cuando apagas o suspendes el PC.
 - un plugin para la barra de [Omarchy](https://omarchy.org/), **Mini Screen**, para elegir el archivo y girarlo con un clic
 - el mismo widget para **KDE Plasma 6** (CachyOS, Arch + Plasma...)
+- una versión para **Windows 11** (rama `windows`): app en la bandeja y el mismo CLI. Mira [Windows 11](#windows-11)
 
 ## ¿Es compatible mi pantalla?
 
@@ -57,6 +58,69 @@ Para actualizar: `git pull && ./install.sh`. Para quitarlo: `./install.sh --unin
 | `minipantalla info` | Muestra la resolución (prueba la conexión) |
 
 `--fit cover|contain|stretch` elige cómo encajar un archivo que no sea de 480×480.
+
+## Windows 11
+
+En Windows, lo que en Linux hace el servicio lo hace una app en la **bandeja del
+sistema**. Usa el mismo código de transmisión (`servicio.py`, `acciones.py` y
+`vendor/`).
+
+### Instalación
+
+Necesitas [Python 3.9+](https://www.python.org/downloads/windows/) (marca
+**Add python.exe to PATH**) o `winget install Python.Python.3.12`. Después:
+
+```powershell
+git clone -b windows https://github.com/coricogit/minipantalla.git $HOME\src\minipantalla
+py $HOME\src\minipantalla\windows\install.py
+```
+
+También puedes hacer doble clic en `windows\instalar.bat`, que deja el resultado en
+`windows\install.log`.
+
+El instalador:
+
+- instala lo que falte para ese Python: pyusb, libusb, Pillow, ffmpeg (vía
+  imageio-ffmpeg) y PySide6
+- comprueba que la pantalla use el driver **WinUSB** y, si no, explica cómo ponerlo
+- crea `Imágenes\minipantalla` (respeta Imágenes en OneDrive; se cambia con `MINIPANTALLA_DIR`)
+- añade el comando `minipantalla` (en `%LOCALAPPDATA%\minipantalla\bin`, que se añade a tu PATH)
+- hace que la app se abra al iniciar sesión (`--no-autostart` para evitarlo) y la abre (`--no-start`)
+
+Para actualizar: `git pull` y vuelve a ejecutar `install.py`. Para quitarlo:
+`py windows\install.py --uninstall` (no toca tus archivos ni tus ajustes).
+
+### Driver WinUSB
+
+Windows no trae driver para este chip. La pantalla tiene que usar **WinUSB**
+(una sola vez):
+
+1. Descarga [Zadig](https://zadig.akeo.ie) y ábrelo.
+2. *Options > List All Devices* y elige el dispositivo con USB ID `2A55 9990`.
+3. Elige **WinUSB** y pulsa *Replace Driver*.
+
+Con WinUSB, el programa del fabricante deja de ver la pantalla.
+
+### Uso
+
+**El icono de la bandeja** es una pantallita redonda con un punto de color: verde
+si transmite, ámbar si espera un archivo y rojo si la pantalla no está conectada.
+
+- **clic**: abre el panel con tus archivos (las miniaturas son redondas, como la
+  pantalla). Clic en uno para transmitirlo; abajo están la rotación y el encaje.
+- **clic central**: apagar o encender la pantalla
+- **clic derecho**: abrir el panel, apagar o encender, abrir la carpeta, iniciar con Windows, salir
+
+La pantalla se apaga al salir de la app, al cerrar sesión, al apagar el PC y al
+suspenderlo. Al despertar, vuelve a transmitir.
+
+El CLI tiene los mismos comandos que en Linux (`poner`, `rotar`, `estado`,
+`iniciar`, `parar`, `guardar`, `transmitir`, `mostrar`, `info`). `iniciar` y `parar`
+encienden y apagan la pantalla desde la app de la bandeja; `guardar`, `transmitir`
+e `info` necesitan la pantalla libre (`minipantalla parar`).
+
+El estado y el registro están en `%LOCALAPPDATA%\minipantalla` (`estado.json` y
+`minipantalla.log`), y los ajustes en `%APPDATA%\AppotechLCD\settings.ini`.
 
 ## Límites conocidos
 

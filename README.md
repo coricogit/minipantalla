@@ -9,6 +9,7 @@ Windows app. This repo gives you:
   The screen turns off when the PC shuts down or suspends.
 - an [Omarchy](https://omarchy.org/) bar plugin, **Mini Screen**, to pick a file and rotate it with one click ([also on its own repo](https://github.com/coricogit/omarchy-mini-screen))
 - the same widget for **KDE Plasma 6** (CachyOS, Arch + Plasma...)
+- a **Windows 11** version (`windows` branch): a tray app and the same CLI. See [Windows 11](#windows-11)
 
 *[Leer en español](README.es.md)*
 
@@ -61,6 +62,66 @@ The CLI messages are in Spanish. The commands:
 | `minipantalla info` | Show the resolution (connection test) |
 
 `--fit cover|contain|stretch` chooses how a file that isn't 480×480 is fitted.
+
+## Windows 11
+
+On Windows, a **system tray** app does what the service does on Linux. It uses the
+same streaming code (`servicio.py`, `acciones.py` and `vendor/`).
+
+### Install
+
+You need [Python 3.9+](https://www.python.org/downloads/windows/) (tick
+**Add python.exe to PATH**) or `winget install Python.Python.3.12`. Then:
+
+```powershell
+git clone -b windows https://github.com/coricogit/minipantalla.git $HOME\src\minipantalla
+py $HOME\src\minipantalla\windows\install.py
+```
+
+Or double-click `windows\instalar.bat`, which saves the output to `windows\install.log`.
+
+The installer:
+
+- installs whatever that Python is missing: pyusb, libusb, Pillow, ffmpeg (through
+  imageio-ffmpeg) and PySide6
+- checks that the screen uses the **WinUSB** driver and explains how to set it if not
+- creates `Pictures\minipantalla` (follows Pictures into OneDrive; override with `MINIPANTALLA_DIR`)
+- adds the `minipantalla` command (in `%LOCALAPPDATA%\minipantalla\bin`, added to your PATH)
+- starts the app when you sign in (`--no-autostart` to skip) and opens it (`--no-start`)
+
+To update: `git pull` and run `install.py` again. To remove it:
+`py windows\install.py --uninstall` (your files and settings are left alone).
+
+### WinUSB driver
+
+Windows has no driver for this chip. The screen has to use **WinUSB** (once):
+
+1. Download [Zadig](https://zadig.akeo.ie) and open it.
+2. *Options > List All Devices* and pick the device with USB ID `2A55 9990`.
+3. Choose **WinUSB** and click *Replace Driver*.
+
+With WinUSB, the vendor app no longer sees the screen.
+
+### Usage
+
+**The tray icon** is a little round screen with a colored dot: green while streaming,
+amber while it waits for a file and red when the screen isn't connected.
+
+- **click**: opens the panel with your files (round thumbnails, like the screen).
+  Click one to stream it; rotation and fit are at the bottom.
+- **middle click**: turn the screen off or on
+- **right click**: open the panel, turn off or on, open the folder, start with Windows, quit
+
+The screen turns off when you quit the app, sign out, shut down or suspend the PC.
+When the PC wakes up, streaming resumes.
+
+The CLI has the same commands as on Linux (`poner`, `rotar`, `estado`, `iniciar`,
+`parar`, `guardar`, `transmitir`, `mostrar`, `info`). `iniciar` and `parar` turn the
+screen on and off through the tray app; `guardar`, `transmitir` and `info` need the
+screen free (`minipantalla parar`).
+
+State and log live in `%LOCALAPPDATA%\minipantalla` (`estado.json` and
+`minipantalla.log`); settings in `%APPDATA%\AppotechLCD\settings.ini`.
 
 ## Known limits
 
